@@ -27,7 +27,7 @@ class Player{
     }
     shoot(){
         const projectile = this.game.getProjectile()
-        if(projectile) projectile.start(this.x, this.y);
+        if(projectile) projectile.start(this.x + this.width * 0.5, this.y);
     }
 
 
@@ -36,10 +36,10 @@ class Player{
 class Projectile{
     constructor(){
         this.width = 2;
-        this.height = 10;
+        this.height = 12;
         this.x = 20;
         this.y = 20;
-        this.speed = 20;
+        this.speed = 10;
         this.free = true; //Projectile availability 
     }
     draw(context){
@@ -47,13 +47,21 @@ class Projectile{
             context.fillRect(this.x, this.y, this.width, this.height);
         }
     }
-    update(){
+    update(game){
         if(!this.free){
+            //bullet direction
             this.y -= this.speed;
+            //bullet reset boundaries
+            if(this.y < 0 - this.height) this.reset();
+            if(this.x < 0 - this.width) this.reset();
+            if(this.x > game.width + game.width) this.reset()
+            console.log(game.width);
+            if(this.y > game.height + this.height) this.reset()
+            
         }
     }
     start(x, y){
-        this.x = x;
+        this.x = x - this.width * 0.5;
         this.y = y;
         this.free = false;
     }
@@ -87,15 +95,16 @@ class Game{
         window.addEventListener('keyup', e =>{
             const index = this.keys.indexOf(e.key);
             if(index > -1) this.keys.splice(index, 1)//removes keys from array on keyup
+            //fire button
             if(e.key === '1') this.player.shoot();
         });
 
     }
-    render(context){
+    render(context, canvas){//visually renders object
         this.player.draw(context);
         this.player.update();
         this.projectilesPool.forEach(projectile =>{
-            projectile.update()
+            projectile.update(canvas)
             projectile.draw(context)
         })
     }
@@ -128,7 +137,7 @@ window.addEventListener('load', function(){
 
     function animate(){//create animation loop
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        game.render(ctx);
+        game.render(ctx, canvas);
         window.requestAnimationFrame(animate);
     }
 
