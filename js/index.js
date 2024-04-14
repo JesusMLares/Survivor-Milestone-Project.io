@@ -10,9 +10,12 @@ class Player{
     }
         //Draws the player
     draw(context){
-        context.beginPath();
-        context.arc(this.x, this.y, this.raidus, 0, Math.PI * 2);
-        context.stroke();
+        if(this.game.debug){
+            context.beginPath();
+            context.arc(this.x, this.y, this.raidus, 0, Math.PI * 2);
+            context.stroke();  
+        }
+        
 
     }
     update(){ 
@@ -49,18 +52,76 @@ class Crosshair{
         context.translate(this.x, this.y)
         context.rotate(this.angle);
         context.drawImage(this.image, (-this.radius + 1.5), (-this.radius + 2.0));
-        context.beginPath();
-        context.arc(0, 0, this.radius, 0, Math.PI * 2);
-        context.stroke();
-        context.restore()
+        if(this.game.debug){
+            context.beginPath();
+            context.arc(0, 0, this.radius, 0, Math.PI * 2);
+            context.stroke();
+        }
+        
+        context.restore();
     }
     update(){
         //Places crosshair around player using calcAim
-        this.aim = this.game.calcAim(this.game.player, this.game.mouse)
+        this.aim = this.game.calcAim(this.game.player, this.game.mouse);
         this.x = this.game.player.x + 30 * this.aim [0];
         this.y = this.game.player.y + 30 * this.aim[1];
         //Calculates angle of crosshair
-        this.angle = Math.atan2(this.aim[3], this.aim[2])
+        this.angle = Math.atan2(this.aim[3], this.aim[2]);
+    }
+    shoot(){
+        //fire projectiles
+        const projectile = this.game.getProjectile();
+        //projectiles direction
+        if (projectile) projectile.start(this.x, this.y, this.aim[0], this.aim[1])
+        
+    }
+}
+
+class Projectiles{
+    //Projectile properties
+    constructor(game){
+        this.game = game;
+        this.x;
+        this.y;
+        this.radius = 2;
+        this.speedX = 1;
+        this.speedY = 1;
+        this.speedModifier = 4;
+        this.free = true;
+    }
+    //Makes projectile active from pool
+    start(x, y, speedX, speedY){
+        this.free = false;
+        this.x = x;
+        this.y = y;
+        this.speedX = speedX * this.speedModifier;
+        this.speedY = speedY * this.speedModifier;
+    }
+    //Reset projectile in pool
+    reset(){
+        this.free = true;
+    }
+    //Draw projectile
+    draw(context){
+        if (!this.free){
+            context.save()
+            context.beginPath();
+            context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            context.fillStyle = 'gold'
+            context.fill();
+            context.restore()
+        }
+    }
+    update(){
+        //Projectile speed
+        if (!this.free){
+            this.x += this.speedX;
+            this.y += this.speedY;
+        }
+        //Reset projectile
+        if(this.x < 0 || this.x > this.game.width || this.y <0 || this.y > this.game.height){
+            this.reset()
+        }
     }
 }
 
@@ -72,12 +133,21 @@ class Game{
         this.height = this.canvas.height;
         this.player = new Player(this);
         this.crosshair = new Crosshair(this);
+        this.projectile = new Projectiles(this)
+
+        this.projectilePool = [];
+        //Amount of projectils
+        this.numberOfProjectiles = 20;
+        this.createProjectilePool();
 
         //Mouse properties
         this.mouse = {
             x: 0,
             y: 0
         }
+
+        //Only for dev use
+        this.debug = true;
 
         //Key Properties
         this.keys = [];
@@ -86,12 +156,16 @@ class Game{
         //Adds key to array on kydown
         window.addEventListener('keydown', e =>{
             if(this.keys.indexOf(e.key) === -1) this.keys.push(e.key); //adds keys to array once
+            console.log(this.keys)
         });
 
         //Removes keys from array on keyup
         window.addEventListener('keyup', e =>{
             const index = this.keys.indexOf(e.key);
             if(index > -1) this.keys.splice(index, 1);
+
+            //debug key checker
+            if (e.key === ']') this.debug = !this.debug;
  
         });
 
@@ -100,14 +174,26 @@ class Game{
             this.mouse.x = e.offsetX;
             this.mouse.y = e.offsetY;
         });
+
+        //Click event
+        window.addEventListener('mousedown', (e)=>{
+            this.mouse.x = e.offsetX;
+            this.mouse.y = e.offsetY;
+            this.crosshair.shoot()
+        })
     }
     //Renders player, projectiles, etc
     render(context){
         this.player.draw(context);
-        this.player.update()
+        this.player.update();
 
         this.crosshair.draw(context)
-        this.crosshair.update()
+        this.crosshair.update();
+
+        this.projectilePool.forEach(projectile =>{
+            projectile.draw(context);
+            projectile.update()
+        })
 
         //creats a visual line from the player to the mouse
         // context.beginPath();
@@ -126,6 +212,18 @@ class Game{
         const aimY = dy / distance * -1;
         return[aimX, aimY, dx, dy];
     };
+    //Create projectiles for pool
+    createProjectilePool(){
+        for (let i = 0; i < this.numberOfProjectiles; i++) {
+            this.projectilePool.push (new Projectiles(this));
+        }
+    }
+    //Cycle through pool for free projectiles
+    getProjectile(){
+        for (let i = 0; i < this.projectilePool.length; i++) {
+            if(this.projectilePool[i].free) return this.projectilePool[i];  
+        }
+    }
 }
 
 window.addEventListener('load', function(){
