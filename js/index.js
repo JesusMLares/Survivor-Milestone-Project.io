@@ -14,16 +14,15 @@ class Player{
         context.arc(this.x, this.y, this.raidus, 0, Math.PI * 2);
         context.stroke();
 
-
     }
     update(){ 
-        //movement
+        //Player movement
         if (this.game.keys.indexOf('a') > -1)this.x -= this.speed;
         if (this.game.keys.indexOf('d') > -1)this.x += this.speed;
         if (this.game.keys.indexOf('w') > -1)this.y -= this.speed;
         if (this.game.keys.indexOf('s') > -1)this.y += this.speed;
 
-        //boundaries
+        //Player boundaries
         if(this.x < 0) this.x = 0;
         else if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
 
@@ -33,26 +32,35 @@ class Player{
 }
 
 class Crosshair{
+    //Crosshair properties
     constructor(game){
         this.game = game;
         this.x = this.game.width * 0.5;
         this.y = this.game.height * 0.5;
         this.radius = 10;
-
         this.image = document.getElementById('player');
         this.aim;
+        this.angle = 0;
     }
 
     draw(context){
-        context.drawImage(this.image, this.x - (this.radius - 1.5), this.y - (this.radius - 1.5));
+        //Draws crosshair
+        context.save();//Restricts canvas state
+        context.translate(this.x, this.y)
+        context.rotate(this.angle);
+        context.drawImage(this.image, (-this.radius + 1.5), (-this.radius + 2.0));
         context.beginPath();
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        context.arc(0, 0, this.radius, 0, Math.PI * 2);
         context.stroke();
+        context.restore()
     }
     update(){
-        this.aim = this.game.calcAim(this.game.mouse, this.game.player)
+        //Places crosshair around player using calcAim
+        this.aim = this.game.calcAim(this.game.player, this.game.mouse)
         this.x = this.game.player.x + 30 * this.aim [0];
         this.y = this.game.player.y + 30 * this.aim[1];
+        //Calculates angle of crosshair
+        this.angle = Math.atan2(this.aim[3], this.aim[2])
     }
 }
 
@@ -93,7 +101,7 @@ class Game{
             this.mouse.y = e.offsetY;
         });
     }
-    //Render player, projectiles, etc
+    //Renders player, projectiles, etc
     render(context){
         this.player.draw(context);
         this.player.update()
@@ -102,10 +110,10 @@ class Game{
         this.crosshair.update()
 
         //creats a visual line from the player to the mouse
-        context.beginPath();
-        context.moveTo(this.player.x, this.player.y);
-        context.lineTo(this.mouse.x, this.mouse.y);
-        context.stroke()
+        // context.beginPath();
+        // context.moveTo(this.player.x, this.player.y);
+        // context.lineTo(this.mouse.x, this.mouse.y);
+        // context.stroke()
     }
     //Calculates aim reticle from player
     calcAim(a, b){//(mouse, player)
@@ -114,8 +122,8 @@ class Game{
         const dy = a.y - b.y;
         //JavaScript Pythagorean Theorem
         const distance = Math.hypot(dx, dy);
-        const aimX = dx / distance;
-        const aimY = dy / distance;
+        const aimX = dx / distance * -1;
+        const aimY = dy / distance * -1;
         return[aimX, aimY, dx, dy];
     };
 }
