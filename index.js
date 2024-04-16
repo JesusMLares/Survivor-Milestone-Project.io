@@ -80,7 +80,7 @@ class Crosshair{
         //fire projectiles
         const projectile = this.game.getProjectile();
         //projectiles direction
-        if (projectile) projectile.start(this.x, this.y, this.aim[0], this.aim[1])
+        if (projectile) projectile.start(this.x + this.radius * this.aim [0], this.y + this.radius * this.aim[1], this.aim[0], this.aim[1])
         
     }
 }
@@ -94,7 +94,7 @@ class Projectiles{
         this.radius = 2;
         this.speedX = 1;
         this.speedY = 1;
-        this.speedModifier = 4;
+        this.speedModifier = 1;
         this.free = true;
     }
     //Makes projectile active from pool
@@ -133,6 +133,56 @@ class Projectiles{
     }
 }
 
+class Enemy{
+    constructor(game){
+        this.game = game;
+        this.x = 100;
+        this.y = 100;
+        this.radius = 10;
+        this.width = this.radius * 2;
+        this.height = this.radius * 2;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.speedModifier = .02;
+        this.free = true;
+
+    }
+    //Makes enemy active from pool
+    start(){
+        this.free = false;
+        this.x = Math.random() * this.game.width;
+        this.y = Math.random() * this.game.height;
+
+        const aim = this.game.calcAim(this, this.game.player);
+        
+        this.speedX = aim[0] * this.speedModifier;
+        this.speedY = aim[1] * this.speedModifier;
+    }
+    //Resets enemy back into pool
+    reset(){
+        this.free = true;
+    }
+    //Creates enemy shape
+    draw(context){
+        if (!this.free){
+            context.beginPath();
+            context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            context.stroke();
+        }
+    }
+    update(){
+        if (!this.free){
+            const aim = this.game.calcAim(this, this.game.player);
+        
+            this.speedX = aim[0] * this.speedModifier;
+            this.speedY = aim[1] * this.speedModifier;
+
+            this.x += this.speedX;
+            this.y += this.speedY;
+        }
+    }
+}
+
 class Game{
     constructor(canvas){
         //Properties of game: size, objects, etc
@@ -143,10 +193,21 @@ class Game{
         this.crosshair = new Crosshair(this);
         this.projectile = new Projectiles(this)
 
+        /*** Projectiles ***/
         this.projectilePool = [];
-        //Amount of projectils
         this.numberOfProjectiles = 20;
         this.createProjectilePool();
+
+        /*** Enemies ***/
+        this.enemyPool = [];
+        this.numberOfEnemies = 20;
+        this.createEnemyPool();
+
+        this.enemyPool[0].start()
+        this.enemyPool[1].start()
+        this.enemyPool[2].start()
+        this.enemyPool[3].start()
+        this.enemyPool[4].start()
 
         //Mouse properties
         this.mouse = {
@@ -174,6 +235,7 @@ class Game{
 
             //debug key checker
             if (e.key === ']') this.debug = !this.debug;
+            else if (e.key === ' ') this.crosshair.shoot()
  
         });
 
@@ -201,6 +263,11 @@ class Game{
         this.projectilePool.forEach(projectile =>{
             projectile.draw(context);
             projectile.update()
+
+        this.enemyPool.forEach(enemy =>{
+            enemy.draw(context);
+            enemy.update()
+        })
         })
 
         //creats a visual line from the player to the mouse
@@ -220,16 +287,34 @@ class Game{
         const aimY = dy / distance * -1;
         return[aimX, aimY, dx, dy];
     };
-    //Create projectiles for pool
+
+    /***** Projectile Pool *****/
+
+    //Create projectiles in pool
     createProjectilePool(){
         for (let i = 0; i < this.numberOfProjectiles; i++) {
             this.projectilePool.push (new Projectiles(this));
         }
     }
-    //Cycle through pool for free projectiles
+    //Cycles through pool for free projectiles
     getProjectile(){
         for (let i = 0; i < this.projectilePool.length; i++) {
             if(this.projectilePool[i].free) return this.projectilePool[i];  
+        }
+    }
+
+    /***** Enemy Pool *****/
+
+    //Create enemies in pool
+    createEnemyPool(){
+        for(let i = 0; i < this.numberOfEnemies; i++){
+            this.enemyPool.push(new Enemy(this))
+        }
+    }
+    //Cycles through pool for free enemies
+    getEnemy(){
+        for(let i = 0; i< this.enemyPool.length; i++){
+            if (this.enemyPool[i].free) return this.enemyPool[i]
         }
     }
 }
