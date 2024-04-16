@@ -4,7 +4,7 @@ class Player{
         this.game = game;
         this.x = this.game.width * 0.5;
         this.y = this.game.height *0.5;
-        this.raidus = 20;
+        this.radius = 20;
         this.speed = 1;
 
     }
@@ -13,7 +13,7 @@ class Player{
         if(this.game.debug){
             context.beginPath();
             context.strokeStyle = 'white';
-            context.arc(this.x, this.y, this.raidus, 0, Math.PI * 2);
+            context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
             context.stroke();  
         }
         
@@ -180,11 +180,11 @@ class Enemy{
             this.y += this.speedY;
 
             //Check collision of enemy and player
-            //FIXME: Collision with player not working, but crosshair is...
             if (this.game.checkCollision(this, this.game.player)){
                 this.reset();
             }
 
+            //TODO: Remove later once crosshair fulling created
             if (this.game.checkCollision(this, this.game.crosshair)){
                 this.reset();
             }
