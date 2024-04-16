@@ -20,11 +20,17 @@ class Player{
 
     }
     update(){ 
-        //Player movement
+        //Player movement WASD
         if (this.game.keys.indexOf('a') > -1)this.x -= this.speed;
         if (this.game.keys.indexOf('d') > -1)this.x += this.speed;
         if (this.game.keys.indexOf('w') > -1)this.y -= this.speed;
-        if (this.game.keys.indexOf('s') > -1)this.y += this.speed;
+        if (this.game.keys.indexOf('s') > -1)this.y += this.speed
+
+        //Player movement ArrowKeys
+        if (this.game.keys.indexOf('ArrowLeft') > -1)this.x -= this.speed;
+        if (this.game.keys.indexOf('ArrowRight') > -1)this.x += this.speed;
+        if (this.game.keys.indexOf('ArrowUp') > -1)this.y -= this.speed;
+        if (this.game.keys.indexOf('ArrowDown') > -1)this.y += this.speed
 
         //Player boundaries
         if(this.x < 0) this.x = 0;
@@ -158,6 +164,7 @@ class Game{
         //Adds key to array on kydown
         window.addEventListener('keydown', e =>{
             if(this.keys.indexOf(e.key) === -1) this.keys.push(e.key); //adds keys to array once
+            console.log(this.keys)
         });
 
         //Removes keys from array on keyup
