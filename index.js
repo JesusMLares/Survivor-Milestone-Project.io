@@ -150,11 +150,11 @@ class Enemy{
     //Makes enemy active from pool
     start(){
         this.free = false;
+
+        //Moves enemy towards player on start
         this.x = Math.random() * this.game.width;
         this.y = Math.random() * this.game.height;
-
         const aim = this.game.calcAim(this, this.game.player);
-        
         this.speedX = aim[0] * this.speedModifier;
         this.speedY = aim[1] * this.speedModifier;
     }
@@ -172,13 +172,23 @@ class Enemy{
     }
     update(){
         if (!this.free){
+            //Constantly moves enemy towards player
             const aim = this.game.calcAim(this, this.game.player);
-        
             this.speedX = aim[0] * this.speedModifier;
             this.speedY = aim[1] * this.speedModifier;
-
             this.x += this.speedX;
             this.y += this.speedY;
+
+            //Check collision of enemy and player
+            //FIXME: Collision with player not working, but crosshair is...
+            if (this.game.checkCollision(this, this.game.player)){
+                this.reset();
+            }
+
+            if (this.game.checkCollision(this, this.game.crosshair)){
+                this.reset();
+            }
+
         }
     }
 }
@@ -276,7 +286,11 @@ class Game{
         // context.lineTo(this.mouse.x, this.mouse.y);
         // context.stroke()
     }
+
+    /***** Aim/Distance Method  *****/
+
     //Calculates aim reticle from player
+    //Can also be used for other purposes
     calcAim(a, b){//(mouse, player)
         //distance between two objects 
         const dx = a.x - b.x; 
@@ -287,6 +301,18 @@ class Game{
         const aimY = dy / distance * -1;
         return[aimX, aimY, dx, dy];
     };
+
+    /***** Check Collision Method  *****/
+
+    checkCollision(a, b){
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const distance = Math.hypot(dx, dy);
+        //Only works for circles!
+        const sumOfRadii = a.radius + b.radius;
+        return distance < sumOfRadii;
+
+    }
 
     /***** Projectile Pool *****/
 
