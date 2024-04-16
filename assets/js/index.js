@@ -12,6 +12,7 @@ class Player{
     draw(context){
         if(this.game.debug){
             context.beginPath();
+            context.strokeStyle = 'white';
             context.arc(this.x, this.y, this.raidus, 0, Math.PI * 2);
             context.stroke();  
         }
@@ -51,6 +52,7 @@ class Crosshair{
         context.save();//Restricts canvas state
         context.translate(this.x, this.y)
         context.rotate(this.angle);
+        context.strokeStyle = 'white';
         context.drawImage(this.image, (-this.radius + 1.5), (-this.radius + 2.0));
         if(this.game.debug){
             context.beginPath();
@@ -156,7 +158,6 @@ class Game{
         //Adds key to array on kydown
         window.addEventListener('keydown', e =>{
             if(this.keys.indexOf(e.key) === -1) this.keys.push(e.key); //adds keys to array once
-            console.log(this.keys)
         });
 
         //Removes keys from array on keyup
