@@ -143,7 +143,7 @@ class Enemy{
         this.height = this.radius * 2;
         this.speedX = 0;
         this.speedY = 0;
-        this.speedModifier = .3;
+        this.speedModifier = .4;
         this.free = true;
 
     }
@@ -151,9 +151,25 @@ class Enemy{
     start(){
         this.free = false;
 
+        //Enemy spawn location
+        /* Using Ternary Operator (?) a form of an if else statement.
+
+        1. Condition to evalutate 
+        2. (?) if true... do this
+        3. (:) if not... do this
+        
+        */
+        if (Math.random() < 0.5){
+            //Spawn top or bottom
+            this.x = Math.random() * this.game.width;
+            this.y = Math.random() < 0.5 ? 0: this.game.height + this.radius;
+        } else {
+            //spawn left or right
+            this.x = Math.random() < 0.5 ? 0 : this.game.width + this.radius;
+            this.y = Math.random () * this.game.height;
+        }
+        
         //Moves enemy towards player on start
-        this.x = Math.random() * this.game.width;
-        this.y = Math.random() * this.game.height;
         const aim = this.game.calcAim(this, this.game.player);
         this.speedX = aim[0] * this.speedModifier;
         this.speedY = aim[1] * this.speedModifier;
@@ -166,6 +182,7 @@ class Enemy{
     draw(context){
         if (!this.free){
             context.beginPath();
+            context.strokeStyle = 'purple';
             context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
             context.stroke();
         }
@@ -185,9 +202,14 @@ class Enemy{
             }
 
             //TODO: Remove later once crosshair fully created
-            if (this.game.checkCollision(this, this.game.crosshair)){
-                this.reset();
-            }
+            // 
+            
+            this.game.projectilePool.forEach(projectile=>{
+                if (!projectile.free && this.game.checkCollision(this, projectile)){
+                    projectile.reset();
+                    this.reset()
+                }
+            })
 
         }
     }
@@ -210,11 +232,11 @@ class Game{
 
         /*** Enemies ***/
         this.enemyPool = [];
-        this.numberOfEnemies = 20;
+        this.numberOfEnemies = 30;
         this.createEnemyPool();
         this.enemyPool[0].start()
         this.enemyTimer = 0;
-        this.enemyInterval = 1000;
+        this.enemyInterval = 300;
 
         //Mouse properties
         this.mouse = {
