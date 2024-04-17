@@ -143,7 +143,7 @@ class Enemy{
         this.height = this.radius * 2;
         this.speedX = 0;
         this.speedY = 0;
-        this.speedModifier = .02;
+        this.speedModifier = .3;
         this.free = true;
 
     }
@@ -184,7 +184,7 @@ class Enemy{
                 this.reset();
             }
 
-            //TODO: Remove later once crosshair fulling created
+            //TODO: Remove later once crosshair fully created
             if (this.game.checkCollision(this, this.game.crosshair)){
                 this.reset();
             }
@@ -212,12 +212,9 @@ class Game{
         this.enemyPool = [];
         this.numberOfEnemies = 20;
         this.createEnemyPool();
-
         this.enemyPool[0].start()
-        this.enemyPool[1].start()
-        this.enemyPool[2].start()
-        this.enemyPool[3].start()
-        this.enemyPool[4].start()
+        this.enemyTimer = 0;
+        this.enemyInterval = 1000;
 
         //Mouse properties
         this.mouse = {
@@ -235,7 +232,6 @@ class Game{
         //Adds key to array on kydown
         window.addEventListener('keydown', e =>{
             if(this.keys.indexOf(e.key) === -1) this.keys.push(e.key); //adds keys to array once
-            console.log(this.keys)
         });
 
         //Removes keys from array on keyup
@@ -263,7 +259,7 @@ class Game{
         })
     }
     //Renders player, projectiles, etc
-    render(context){
+    render(context, deltaTime){
         this.player.draw(context);
         this.player.update();
 
@@ -273,12 +269,20 @@ class Game{
         this.projectilePool.forEach(projectile =>{
             projectile.draw(context);
             projectile.update()
-
+        });
         this.enemyPool.forEach(enemy =>{
             enemy.draw(context);
             enemy.update()
-        })
-        })
+
+        });
+        //Periodically activate enemy
+        if(this.enemyTimer < this.enemyInterval){
+            this.enemyTimer += deltaTime;
+        }else {
+            this.enemyTimer = 0;
+            const enemy = this.getEnemy();
+            if(enemy)enemy.start()
+        }
 
         //creats a visual line from the player to the mouse
         // context.beginPath();
@@ -356,12 +360,22 @@ window.addEventListener('load', function(){
     const game = new Game(canvas);
     
 
-    //Animation loop
-    function animate(){
+    
+
+    /***** Animation loop *****/
+    let lastTime = 0 //Time since last animation loop
+
+    function animate(timeStamp){//Time since last requested animation frame
+        const deltaTime = timeStamp - lastTime;//Number of miliseconds it takes our computer to serve 1 animation frame.
+        lastTime = timeStamp;
+
         //clears canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        game.render(ctx);
+        game.render(ctx, deltaTime);
         window.requestAnimationFrame(animate);
+
+        //Framerate
+        //console.log(deltaTime);
     }
 
     animate()
