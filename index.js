@@ -4,18 +4,17 @@ class Player{
         this.game = game;
         this.x = this.game.width * 0.5;
         this.y = this.game.height *0.5;
-        this.radius = 20;
+        this.radius = 10;
         this.speed = 1;
 
     }
         //Draws the player
     draw(context){
-        if(this.game.debug){
             context.beginPath();
-            context.strokeStyle = 'white';
+            context.fillStyle = 'yellow';
             context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            context.stroke();  
-        }
+            context.fill();  
+        
         
 
     }
@@ -47,8 +46,8 @@ class Crosshair{
         this.game = game;
         this.x = this.game.width * 0.5;
         this.y = this.game.height * 0.5;
-        this.radius = 10;
-        this.image = document.getElementById('player');
+        this.radius = 5;
+        this.image = document.getElementById('crosshair');
         this.aim;
         this.angle = 0;
     }
@@ -59,7 +58,7 @@ class Crosshair{
         context.translate(this.x, this.y)
         context.rotate(this.angle);
         context.strokeStyle = 'white';
-        context.drawImage(this.image, (-this.radius + 1.5), (-this.radius + 2.0));
+        context.drawImage(this.image, (-this.radius + 2), (-this.radius + 0), 10, 10);
         if(this.game.debug){
             context.beginPath();
             context.arc(0, 0, this.radius, 0, Math.PI * 2);
@@ -71,8 +70,8 @@ class Crosshair{
     update(){
         //Places crosshair around player using calcAim
         this.aim = this.game.calcAim(this.game.player, this.game.mouse);
-        this.x = this.game.player.x + 30 * this.aim [0];
-        this.y = this.game.player.y + 30 * this.aim[1];
+        this.x = this.game.player.x + 16 * this.aim [0];
+        this.y = this.game.player.y + 16 * this.aim[1];
         //Calculates angle of crosshair
         this.angle = Math.atan2(this.aim[3], this.aim[2]);
     }
@@ -234,7 +233,6 @@ class Game{
         this.enemyPool = [];
         this.numberOfEnemies = 30;
         this.createEnemyPool();
-        this.enemyPool[0].start()
         this.enemyTimer = 0;
         this.enemyInterval = 300;
 
@@ -245,7 +243,7 @@ class Game{
         }
 
         //Only for dev use
-        this.debug = true;
+        this.debug = false;
 
         //Key Properties
         this.keys = [];
