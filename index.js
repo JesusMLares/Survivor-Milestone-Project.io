@@ -144,6 +144,7 @@ class Enemy{
         this.speedY = 0;
         this.speedModifier = .4;
         this.free = true;
+        this.maxLives = 1;
 
     }
     //Makes enemy active from pool
@@ -207,6 +208,7 @@ class Enemy{
                 if (!projectile.free && this.game.checkCollision(this, projectile)){
                     projectile.reset();
                     this.reset()
+                    this.game.score += this.maxLives;
                 }
             })
 
@@ -242,11 +244,14 @@ class Game{
             y: 0
         }
 
-        //Only for dev use
-        this.debug = false;
+        //Score Properties
+        this.score = 0;
 
         //Key Properties
         this.keys = [];
+        
+        //Only for dev use!
+        this.debug = false;
 
         /*** event listeners & controls ***/
         //Adds key to array on kydown
@@ -283,6 +288,8 @@ class Game{
         this.player.draw(context);
         this.player.update();
 
+        this.drawStatusText(context);
+
         this.crosshair.draw(context)
         this.crosshair.update();
 
@@ -309,6 +316,16 @@ class Game{
         // context.moveTo(this.player.x, this.player.y);
         // context.lineTo(this.mouse.x, this.mouse.y);
         // context.stroke()
+    }
+
+    /***** Screen Text *****/
+    drawStatusText(context){
+        context.save();
+        context.textAlign = 'left'
+        context.font = '30px Impact';
+        context.fillText('Score: ' + this.score, 20, 30);
+        context.restore();
+
     }
 
     /***** Aim/Distance Method  *****/
