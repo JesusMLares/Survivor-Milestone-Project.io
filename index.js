@@ -93,7 +93,7 @@ class Projectiles{
         this.radius = 2;
         this.speedX = 1;
         this.speedY = 1;
-        this.speedModifier = 1;
+        this.speedModifier = 3;
         this.free = true;
     }
     //Makes projectile active from pool
@@ -226,7 +226,7 @@ class Game{
 
         /*** Projectiles ***/
         this.projectilePool = [];
-        this.numberOfProjectiles = 20;
+        this.numberOfProjectiles = 30;
         this.createProjectilePool();
 
         /*** Enemies ***/
