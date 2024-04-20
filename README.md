@@ -29,3 +29,6 @@ A JavaScript mimic of Vampire Survivors where the goal is to survive hoards of e
 ## How to Lose:
     -To lose, a player death must occur.
         -Score will reset back to 0.
+
+### Resources used:
+    -Learn how to use Canvas: https://youtube.com/playlist?list=PLpPnRKq7eNW3We9VdCfx9fprhqXHwTPXL&si=lW1MtNdjsLezcc3q
