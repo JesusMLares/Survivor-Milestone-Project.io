@@ -199,6 +199,7 @@ class Enemy{
             //Check collision of enemy and player
             if (this.game.checkCollision(this, this.game.player)){
                 this.reset();
+                this.game.score = 0;
             }
 
             //TODO: Remove later once crosshair fully created
@@ -211,7 +212,7 @@ class Enemy{
                     this.reset()
                     //Update score on enemy kill
                     this.game.score += this.maxLives;
-                }
+                };
             })
 
         }
@@ -235,7 +236,7 @@ class Game{
 
         /*** Enemies ***/
         this.enemyPool = [];
-        this.numberOfEnemies = 30;
+        this.numberOfEnemies = 100;
         this.createEnemyPool();
         this.enemyTimer = 0;
         this.enemyInterval = 300;

@@ -1,17 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survivor.io</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <canvas id="canvas1"></canvas>
-    <div id="hidden">
-        <img src="img/crosshair.png" alt="crosshair" id="crosshair">
-    </div>
-    <script src="index.js"></script>
 
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Survivor.io</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div>
+        <h1>Survivor.io</h1>
+        <h2>INSTRUCTIONS:</h2>
+        <section>
+            <h3>MOVEMENT:</h3>
+            <p></p>
+            <ul>
+                <li>WASD</li>
+                <li>Arrow Keys</li>
+            </ul>
+            <p>Player has the option to move with WASD or Arrow Keys.</p>
+        </section>
+        <section>
+            <h3>SHOOTING:</h3>
+            <ul>
+                <li>Mouse click</li>
+                <li>Spacebar</li>
+            </ul>
+            <p>Player can shoot projectiles that destroy enemies on contact.</p>
+        </section>
+        <h2>HOW TO WIN:</h2>
+        <section>
+            <h3>SCORING:</h3>
+            <ul>
+                <li>
+                    Enemy destroyed = 1 point
+                </li>
+            </ul>
+            <p>
+            When a player projectile comes into contact with an enemy, the enemy will be destroyed and raise the score
+            by 1.
+            </p>
+        </section>
+        <section>
+            <h3>WINNING:</h3>
+            <p>To win, destroy 250 enemies without being touched.</p>
+        </section>
+        <section>
+            <h3>LOSING:</h3>
+            <p>To lose, a player death must occur but coming into contact with an enemy.</p>
+        </section>
+        
+    </div>
+
+        <canvas id="canvas1"></canvas>
+        <div id="hidden">
+            <img src="img/crosshair.png" alt="crosshair" id="crosshair" />
+        </div>
+
+
+    <script src="index.js"></script>
 </body>
+
 </html>

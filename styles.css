@@ -2,11 +2,41 @@ body{
     background-color: black;
 }
 
+section{
+    width: 31vw;
+    border: 2px solid white;;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+h2{
+    font-weight: bold;
+    color: yellow;
+    font-style: italic;
+    text-decoration: underline;
+    margin-bottom: 0;
+}
+
+h3{
+    margin-top: 0;
+}
+
+p{
+    margin-bottom: 0;
+}
+
+#instructions{
+    display: flex;
+    flex-direction: column;
+
+    width: 20vw;
+}
+
 #canvas1 {
     border: 5px solid white;
-    position: absolute;
+    position:absolute;
     top: 50%;
-    left: 50%;
+    left: 70%;
     translate: -50% -50%;
 }
 
