@@ -35,11 +35,11 @@ class Player{
         
 
         //Player boundaries
-        if(this.x < 0) this.x = 0;
-        else if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
+        if(this.x < 0 + this.radius) this.x = 0 + this.radius;
+        else if (this.x > this.game.width - this.radius) this.x = this.game.width - this.radius;
 
-        if(this.y < 0) this.y = 0;
-        else if (this.y > this.game.height -this.height) this.y = this.game.height - this.height;
+        if(this.y < 0 + this.radius) this.y = 0 + this.radius;
+        else if (this.y > this.game.height -this.radius) this.y = this.game.height - this.radius;
     }
 }
 
