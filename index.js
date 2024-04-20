@@ -327,6 +327,7 @@ class Game{
             if(enemy)enemy.start()
         }
 
+        //Shows button
         if(this.score >= this.winningScore){
             document.querySelector('.btn').classList.remove('hide')
         }
@@ -335,6 +336,7 @@ class Game{
 
     /***** Screen Text *****/
     drawStatusText(context){
+        //Display score
         if (!this.gameReset){
             context.save();
             context.textAlign = 'left'
@@ -342,12 +344,14 @@ class Game{
             context.fillText('Score: ' + this.score, 20, 30);
             context.restore(); 
         }else if(this.gameReset && this.score < this.winningScore){
+            //Display loss
             context.textAlign = 'center';
             context.font = '50px Impact';
             context.fillText('You lost :(', this.width * 0.5, this.height * 0.5)
         }
 
         if(this.score >= this.winningScore){
+            //Display win
             context.textAlign = 'center';
             let message1;
             let message2;
