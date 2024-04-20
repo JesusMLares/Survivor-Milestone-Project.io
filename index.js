@@ -321,7 +321,7 @@ class Game{
         //Periodically activate enemy
         if(this.enemyTimer < this.enemyInterval){
             this.enemyTimer += deltaTime;
-        }else {
+        }else if (!this.gameReset){
             this.enemyTimer = 0;
             const enemy = this.getEnemy();
             if(enemy)enemy.start()
