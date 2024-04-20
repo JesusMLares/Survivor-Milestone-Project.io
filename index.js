@@ -253,7 +253,7 @@ class Game{
 
         //Score Properties
         this.score = 0;
-        this.winningScore = 5;
+        this.winningScore = 150;
 
         //Key Properties
         this.keys = [];
