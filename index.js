@@ -20,16 +20,19 @@ class Player{
     }
     update(){ 
         //Player movement WASD
-        if (this.game.keys.indexOf('a') > -1)this.x -= this.speed;
-        if (this.game.keys.indexOf('d') > -1)this.x += this.speed;
-        if (this.game.keys.indexOf('w') > -1)this.y -= this.speed;
-        if (this.game.keys.indexOf('s') > -1)this.y += this.speed
+        if(!this.game.gameReset){
+            if (this.game.keys.indexOf('a') > -1)this.x -= this.speed;
+            if (this.game.keys.indexOf('d') > -1)this.x += this.speed;
+            if (this.game.keys.indexOf('w') > -1)this.y -= this.speed;
+            if (this.game.keys.indexOf('s') > -1)this.y += this.speed
 
-        //Player movement ArrowKeys
-        if (this.game.keys.indexOf('ArrowLeft') > -1)this.x -= this.speed;
-        if (this.game.keys.indexOf('ArrowRight') > -1)this.x += this.speed;
-        if (this.game.keys.indexOf('ArrowUp') > -1)this.y -= this.speed;
-        if (this.game.keys.indexOf('ArrowDown') > -1)this.y += this.speed
+            //Player movement ArrowKeys
+            if (this.game.keys.indexOf('ArrowLeft') > -1)this.x -= this.speed;
+            if (this.game.keys.indexOf('ArrowRight') > -1)this.x += this.speed;
+            if (this.game.keys.indexOf('ArrowUp') > -1)this.y -= this.speed;
+            if (this.game.keys.indexOf('ArrowDown') > -1)this.y += this.speed
+        }
+        
 
         //Player boundaries
         if(this.x < 0) this.x = 0;
@@ -188,7 +191,7 @@ class Enemy{
         }
     }
     update(){
-        if (!this.free){
+        if (!this.free && !this.game.gameReset){
             //Constantly moves enemy towards player
             const aim = this.game.calcAim(this, this.game.player);
             this.speedX = aim[0] * this.speedModifier;
@@ -199,11 +202,12 @@ class Enemy{
             //Check collision of enemy and player
             if (this.game.checkCollision(this, this.game.player)){
                 this.reset();
-                this.game.score = 0;
+                this.game.gameReset = true;
+                setTimeout(() => {
+                    location.reload(true)
+                }, 2500);
             }
 
-            //TODO: Remove later once crosshair fully created
-            // 
             
             //Reset enemy and projectile on collision
             this.game.projectilePool.forEach(projectile=>{
@@ -249,12 +253,19 @@ class Game{
 
         //Score Properties
         this.score = 0;
+        this.winningScore = 5;
 
         //Key Properties
         this.keys = [];
         
         //Only for dev use!
         this.debug = false;
+
+        //Player Death Reset Game
+        this.gameReset = false;
+        document.querySelector('.btn').addEventListener('click', ()=>{
+            location.reload(true)
+        })
 
         /*** event listeners & controls ***/
         //Adds key to array on kydown
@@ -284,7 +295,9 @@ class Game{
             this.mouse.x = e.offsetX;
             this.mouse.y = e.offsetY;
             this.crosshair.shoot()
-        })
+        });
+
+        document.querySelector('.btn')
     }
     //Renders player, projectiles, enemies, etc.
     render(context, deltaTime){
@@ -314,21 +327,38 @@ class Game{
             if(enemy)enemy.start()
         }
 
-        //creats a visual line from the player to the mouse
-        // context.beginPath();
-        // context.moveTo(this.player.x, this.player.y);
-        // context.lineTo(this.mouse.x, this.mouse.y);
-        // context.stroke()
+        if(this.score >= this.winningScore){
+            document.querySelector('.btn').classList.remove('hide')
+        }
+
     }
 
     /***** Screen Text *****/
     drawStatusText(context){
-        context.save();
-        context.textAlign = 'left'
-        context.font = '30px Impact';
-        context.fillText('Score: ' + this.score, 20, 30);
-        context.restore();
+        if (!this.gameReset){
+            context.save();
+            context.textAlign = 'left'
+            context.font = '30px Impact';
+            context.fillText('Score: ' + this.score, 20, 30);
+            context.restore(); 
+        }else if(this.gameReset && this.score < this.winningScore){
+            context.textAlign = 'center';
+            context.font = '50px Impact';
+            context.fillText('You lost :(', this.width * 0.5, this.height * 0.5)
+        }
 
+        if(this.score >= this.winningScore){
+            context.textAlign = 'center';
+            let message1;
+            let message2;
+                message1 = 'You win!';
+                message2 = 'Your score is ' + this.score + '!';
+            context.font = '100px Impact';
+            context.fillText(message1, this.width * 0.5, 200)
+            context.fillText(message2, this.width * 0.5, 550)
+            
+            this.gameReset = true;
+        }       
     }
 
     /***** Aim/Distance Method  *****/

@@ -25,6 +25,22 @@ p{
     margin-bottom: 0;
 }
 
+.btn{
+    width: 32.3vw;
+    height: 60px;
+    color: lightcyan;
+    border-radius: 10px;
+    font-size: 20;
+    font-weight: 700;
+    cursor: pointer;
+
+    z-index: 2;
+}
+
+.hide{
+    display: none;
+}
+
 #instructions{
     display: flex;
     flex-direction: column;
