@@ -10,6 +10,10 @@ section{
     padding: 10px;
 }
 
+h1{
+    color:rgb(4, 169, 4);
+}
+
 h2{
     font-weight: bold;
     color: yellow;
