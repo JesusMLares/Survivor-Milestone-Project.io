@@ -120,7 +120,7 @@ class Projectiles{
         }
     }
     update(){
-        //Projectile speed
+        //Projectile speed "See Line: 81"
         if (!this.free){
             this.x += this.speedX;
             this.y += this.speedY;
@@ -204,10 +204,12 @@ class Enemy{
             //TODO: Remove later once crosshair fully created
             // 
             
+            //Reset enemy and projectile on collision
             this.game.projectilePool.forEach(projectile=>{
                 if (!projectile.free && this.game.checkCollision(this, projectile)){
                     projectile.reset();
                     this.reset()
+                    //Update score on enemy kill
                     this.game.score += this.maxLives;
                 }
             })
@@ -266,7 +268,7 @@ class Game{
 
             //debug key checker
             if (e.key === ']') this.debug = !this.debug;
-            else if (e.key === ' ') this.crosshair.shoot()
+             if (e.key === ' ') this.crosshair.shoot()
  
         });
 
@@ -283,7 +285,7 @@ class Game{
             this.crosshair.shoot()
         })
     }
-    //Renders player, projectiles, etc
+    //Renders player, projectiles, enemies, etc.
     render(context, deltaTime){
         this.player.draw(context);
         this.player.update();
@@ -395,8 +397,6 @@ window.addEventListener('load', function(){
 
     //Allows game to reference canvas
     const game = new Game(canvas);
-    
-
     
 
     /***** Animation loop *****/
