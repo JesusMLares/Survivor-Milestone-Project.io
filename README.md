@@ -24,7 +24,7 @@ A JavaScript mimic of Vampire Survivors where the goal is to survive hoards of e
     When the play collides with an enemy, the player dies.
 
 ## How to Win:
-    -To win, destroy 250 enemies without being touched.
+    -To win, destroy 100 enemies without being touched.
 
 ## How to Lose:
     -To lose, a player death must occur.
